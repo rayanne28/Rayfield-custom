@@ -1,4 +1,4 @@
--[[
+--[[
 
 	Rayfield Interface Suite
 	by Sirius
@@ -222,6 +222,48 @@ local RayfieldLibrary = {
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 
+		HBhub = {
+    TextColor = Color3.fromRGB(240, 240, 240), -- Light text for contrast
+
+    Background = Color3.fromRGB(50, 0, 50), -- Somber Purple for the main background
+    Topbar = Color3.fromRGB(70, 0, 70), -- Slightly lighter purple for the top bar
+    Shadow = Color3.fromRGB(20, 20, 20), -- Dark shadow for depth
+
+    NotificationBackground = Color3.fromRGB(40, 0, 40), -- Darker purple for notifications
+    NotificationActionsBackground = Color3.fromRGB(200, 50, 50), -- Crimson Red for actions
+
+    TabBackground = Color3.fromRGB(60, 0, 60), -- Darker purple for tab background
+    TabStroke = Color3.fromRGB(80, 0, 80), -- Slightly lighter stroke
+    TabBackgroundSelected = Color3.fromRGB(200, 50, 50), -- Crimson Red for selected tab
+    TabTextColor = Color3.fromRGB(240, 240, 240), -- Light text for tabs
+    SelectedTabTextColor = Color3.fromRGB(255, 255, 255), -- White text for selected tab
+
+    ElementBackground = Color3.fromRGB(55, 0, 55), -- Element background in purple
+    ElementBackgroundHover = Color3.fromRGB(65, 0, 65), -- Hover effect in purple
+    SecondaryElementBackground = Color3.fromRGB(50, 0, 50), -- Secondary element background
+    ElementStroke = Color3.fromRGB(90, 0, 90), -- Element stroke
+    SecondaryElementStroke = Color3.fromRGB(80, 0, 80), -- Secondary element stroke
+            
+    SliderBackground = Color3.fromRGB(200, 50, 50), -- Crimson Red for sliders
+    SliderProgress = Color3.fromRGB(200, 50, 50), -- Consistent with background
+    SliderStroke = Color3.fromRGB(220, 70, 70), -- Lighter Crimson Red stroke
+
+    ToggleBackground = Color3.fromRGB(40, 0, 40), -- Dark toggle background
+    ToggleEnabled = Color3.fromRGB(200, 50, 50), -- Crimson Red for enabled state
+    ToggleDisabled = Color3.fromRGB(80, 80, 80), -- Darker for disabled state
+    ToggleEnabledStroke = Color3.fromRGB(220, 70, 70), -- Bright stroke for enabled
+    ToggleDisabledStroke = Color3.fromRGB(130, 130, 130), -- Lighter stroke for disabled
+    ToggleEnabledOuterStroke = Color3.fromRGB(90, 90, 90), -- Outer stroke for enabled
+    ToggleDisabledOuterStroke = Color3.fromRGB(70, 70, 70), -- Outer stroke for disabled
+
+    DropdownSelected = Color3.fromRGB(200, 50, 50), -- Crimson Red for selected dropdown
+    DropdownUnselected = Color3.fromRGB(50, 0, 50), -- Darker purple for unselected dropdown
+
+    InputBackground = Color3.fromRGB(40, 0, 40), -- Input background in purple
+    InputStroke = Color3.fromRGB(70, 70, 70), -- Input stroke
+    PlaceholderColor = Color3.fromRGB(178, 178, 178) -- Placeholder text color
+},
+		
 		Ocean = {
 			TextColor = Color3.fromRGB(230, 240, 240),
 
@@ -3864,83 +3906,5 @@ task.delay(4, function()
 		Main.Notice.Visible = false
 	end
 end)
-
-function RayfieldLibrary:CreateMidSizedWindow(Settings)
-    -- Create a new Frame for the mid-sized window
-    local MidSizedWindow = Instance.new("Frame")
-    MidSizedWindow.Size = UDim2.new(0, 600, 0, 400) -- Set the size of the window
-    MidSizedWindow.Position = UDim2.new(0.5, -300, 0.5, -200) -- Center the window
-    MidSizedWindow.BackgroundColor3 = SelectedTheme.Background -- Match the background color
-    MidSizedWindow.BorderSizePixel = 0 -- Remove border
-    MidSizedWindow.AnchorPoint = Vector2.new(0.5, 0.5) -- Anchor to the center
-    MidSizedWindow.Visible = true -- Make the window visible
-
-    -- Create a title bar for the window
-    local TitleBar = Instance.new("Frame", MidSizedWindow)
-    TitleBar.Size = UDim2.new(1, 0, 0, 40) -- Set the height of the title bar
-    TitleBar.BackgroundColor3 = SelectedTheme.Topbar -- Match the top bar color
-    TitleBar.BorderSizePixel = 0 -- Remove border
-
-    -- Create a title label
-    local TitleLabel = Instance.new("TextLabel", TitleBar)
-    TitleLabel.Size = UDim2.new(1, 0, 1, 0) -- Fill the title bar
-    TitleLabel.Text = Settings.Title or "Mid-Sized Window" -- Set the title
-    TitleLabel.BackgroundTransparency = 1 -- Make the background transparent
-    TitleLabel.TextColor3 = SelectedTheme.TextColor -- Match the text color
-    TitleLabel.TextScaled = true -- Scale the text to fit
-
-    -- Create a close button
-    local CloseButton = Instance.new("TextButton", TitleBar)
-    CloseButton.Size = UDim2.new(0, 40, 0, 40) -- Set the size of the close button
-    CloseButton.Position = UDim2.new(1, -50, 0, 0) -- Position it on the right
-    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for close button
-    CloseButton.Text = "X" -- Close button text
-    CloseButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-    CloseButton.TextScaled = true -- Scale the text to fit
-
-    -- Close button functionality
-    CloseButton.MouseButton1Click:Connect(function()
-        MidSizedWindow:Destroy() -- Destroy the window when clicked
-    end)
-
-    -- Add content to the window (you can customize this part)
-    local ContentFrame = Instance.new("Frame", MidSizedWindow)
-    ContentFrame.Size = UDim2.new(1, 0, 1, -40) -- Fill the remaining space below the title bar
-    ContentFrame.Position = UDim2.new(0, 0, 0, 40) -- Position it below the title bar
-    ContentFrame.BackgroundColor3 = SelectedTheme.ElementBackground -- Match the content background color
-
-    -- Example content: a label
-    local ExampleLabel = Instance.new("TextLabel", ContentFrame)
-    ExampleLabel.Size = UDim2.new(1, 0, 0, 50) -- Set the size of the label
-    ExampleLabel.Position = UDim2.new(0, 0, 0, 10) -- Position it within the content frame
-    ExampleLabel.Text = "This is an example content label." -- Set the label text
-    ExampleLabel.BackgroundTransparency = 1 -- Make the background transparent
-    ExampleLabel.TextColor3 = SelectedTheme.TextColor -- Match the text color
-    ExampleLabel.TextScaled = true -- Scale the text to fit
-
-    -- Make the window draggable
-    local UserInputService = game:GetService("User InputService")
-    local TweenService = game:GetService("TweenService")
-    local dragging = false
-    local dragInput, dragStart, startPos
-
-    local function updateInput(input)
-        local delta = input.Position - dragStart
-        MidSizedWindow.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-
-    TitleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = MidSizedWindow.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-
 
 return RayfieldLibrary
