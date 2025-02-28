@@ -647,6 +647,65 @@ elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
 	Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
 elseif not useStudio then
 	Rayfield.Parent = CoreGui
+--limit
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+-- Create button
+local button = Instance.new("ImageButton")
+button.Size = UDim2.new(0, 50, 0, 50)
+button.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
+button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+button.BorderSizePixel = 0
+button.Image = "" -- Set an image if needed
+button.Parent = game:GetService("CoreGui")
+
+-- Make button round
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(1, 0)
+uiCorner.Parent = button
+
+-- Drag functionality
+local dragging, dragInput, startPos, startMousePos
+
+button.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        startPos = button.Position
+        startMousePos = input.Position
+    end
+end)
+
+button.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - startMousePos
+        button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+button.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+-- Connect to Rayfield Library
+button.MouseButton1Click:Connect(function()
+    if Rayfield and Rayfield.Main then
+        if Rayfield.Main.Visible then
+            Rayfield.Main.Visible = false
+        else
+            Rayfield.Main.Visible = true
+        end
+    end
+end)
+
 end
 
 if gethui then
