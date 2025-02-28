@@ -647,10 +647,12 @@ elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
 	Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
 elseif not useStudio then
 	Rayfield.Parent = CoreGui
---limit
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+print("⚡ Script is running!")
 
 -- Ensure Rayfield is loaded before running the script
 repeat wait() until Rayfield and Rayfield.Main
@@ -659,17 +661,18 @@ print("✅ Rayfield Loaded")
 -- Create button
 local button = Instance.new("ImageButton")
 button.Size = UDim2.new(0, 50, 0, 50)
-button.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
-button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+button.Position = UDim2.new(0, 100, 0, 100) -- Force visible position
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- RED for visibility
 button.BorderSizePixel = 0
-button.Image = "" -- Set an image if needed
+button.Image = "" -- No image, solid color
+button.ZIndex = 9999 -- Make sure it's on top
 
 -- Make button round
 local uiCorner = Instance.new("UICorner")
 uiCorner.CornerRadius = UDim.new(1, 0)
 uiCorner.Parent = button
 
--- Parent the button properly
+-- Try different GUI parents
 if gethui then
     button.Parent = gethui()
     print("✅ Button parented to gethui()")
@@ -677,15 +680,15 @@ elseif syn and syn.protect_gui then
     syn.protect_gui(button)
     button.Parent = CoreGui
     print("✅ Button parented to CoreGui (Synapse detected)")
-elseif game.Players.LocalPlayer:FindFirstChild("PlayerGui") then
-    button.Parent = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+elseif Players.LocalPlayer:FindFirstChild("PlayerGui") then
+    button.Parent = Players.LocalPlayer:FindFirstChild("PlayerGui")
     print("✅ Button parented to PlayerGui")
 else
     button.Parent = CoreGui
     print("⚠️ Fallback: Button parented to CoreGui")
 end
 
--- Debugging: Check if button exists
+-- Check if button is actually created
 if button.Parent then
     print("✅ Button Successfully Created in:", button.Parent)
 else
@@ -731,6 +734,8 @@ button.MouseButton1Click:Connect(function()
         warn("❌ Rayfield GUI not found!")
     end
 end)
+
+print("🎯 Button script successfully loaded!")
 
 
 end
