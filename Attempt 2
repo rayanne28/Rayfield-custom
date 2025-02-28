@@ -3911,5 +3911,86 @@ task.delay(4, function()
 		Main.Notice.Visible = false
 	end
 end)
+local function CreateDraggableButton(Rayfield)
+    local UserInputService = game:GetService("UserInputService")
+    local CoreGui = game:GetService("CoreGui")
+    local TweenService = game:GetService("TweenService")
+
+    if not Rayfield or not Rayfield.Main then
+        warn("❌ Rayfield is not loaded yet!")
+        return
+    end
+
+    -- Create button
+    local button = Instance.new("ImageButton")
+    button.Size = UDim2.new(0, 50, 0, 50)
+    button.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.BorderSizePixel = 0
+    button.Image = "" -- Set an image if needed
+    button.ZIndex = 9999 -- Ensure it's on top
+
+    -- Make button round
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(1, 0)
+    uiCorner.Parent = button
+
+    -- Parent the button
+    if gethui then
+        button.Parent = gethui()
+    elseif syn and syn.protect_gui then
+        syn.protect_gui(button)
+        button.Parent = CoreGui
+    elseif game.Players.LocalPlayer:FindFirstChild("PlayerGui") then
+        button.Parent = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+    else
+        button.Parent = CoreGui
+    end
+
+    -- Drag functionality
+    local dragging, dragInput, startPos, startMousePos
+
+    button.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            startPos = button.Position
+            startMousePos = input.Position
+        end
+    end)
+
+    button.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - startMousePos
+            button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    button.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    -- Button Click: Toggle Rayfield GUI
+    button.MouseButton1Click:Connect(function()
+        if Rayfield and Rayfield.Main then
+            Rayfield.Main.Visible = not Rayfield.Main.Visible
+            print("🟢 Rayfield GUI Toggled. Visible:", Rayfield.Main.Visible)
+        else
+            warn("❌ Rayfield GUI not found!")
+        end
+    end)
+
+    print("✅ Draggable button created successfully!")
+end
+
+-- Return the function so you can call it after loading the library
+return CreateDraggableButton
 
 return RayfieldLibrary
