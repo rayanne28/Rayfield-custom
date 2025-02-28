@@ -650,20 +650,24 @@ elseif not useStudio then
 --limit
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
 
--- Create button
+-- Create button inside the script
 local button = Instance.new("ImageButton")
 button.Size = UDim2.new(0, 50, 0, 50)
 button.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
 button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 button.BorderSizePixel = 0
 button.Image = "" -- Set an image if needed
-button.Parent = game:GetService("CoreGui")
+button.Parent = CoreGui -- Directly parent to CoreGui
 
 -- Make button round
 local uiCorner = Instance.new("UICorner")
 uiCorner.CornerRadius = UDim.new(1, 0)
 uiCorner.Parent = button
+
+-- Debugging: Check if button appears
+print("Button Created at Position:", button.Position)
 
 -- Drag functionality
 local dragging, dragInput, startPos, startMousePos
@@ -695,14 +699,13 @@ button.InputEnded:Connect(function(input)
     end
 end)
 
--- Connect to Rayfield Library
+-- Button Click: Toggle Rayfield GUI
 button.MouseButton1Click:Connect(function()
     if Rayfield and Rayfield.Main then
-        if Rayfield.Main.Visible then
-            Rayfield.Main.Visible = false
-        else
-            Rayfield.Main.Visible = true
-        end
+        Rayfield.Main.Visible = not Rayfield.Main.Visible
+        print("Rayfield GUI Toggled. Visible:", Rayfield.Main.Visible)
+    else
+        print("Rayfield GUI not found!")
     end
 end)
 
