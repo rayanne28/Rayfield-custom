@@ -659,7 +659,8 @@ button.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
 button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 button.BorderSizePixel = 0
 button.Image = "" -- Set an image if needed
-button.Parent = CoreGui -- Directly parent to CoreGui
+button.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
 
 -- Make button round
 local uiCorner = Instance.new("UICorner")
