@@ -3923,10 +3923,14 @@ if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
     ContextActionService:BindAction("ToggleUI", toggleUI, true)
     ContextActionService:SetImage("ToggleUI", "rbxassetid://100698995249426")
 end
+-- Check for and destroy existing ScreenGui to avoid duplicates
+local existingGui = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("RayfieldExtras")
+if existingGui then
+    existingGui:Destroy()
+end
 
--- Create a ScreenGui to hold the button
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.Name = "RayfieldExtras"
+
 
 -- Create the round button
 local button = Instance.new("ImageButton")
