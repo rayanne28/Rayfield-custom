@@ -3909,11 +3909,12 @@ end)
 
 
 
--- Define library, UserInputService, and ContextActionService
+-- Define library as RayfieldLibrary (the main interface object)
+local library = RayfieldLibrary
 
 local function toggleUI(_actionName, inputState, _inputObject)
     if inputState == Enum.UserInputState.Begin then
-        library:SetVisibility(not library:IsVisible())
+        library:SetVisibility(not library:IsVisible()) -- Use RayfieldLibrary's methods
     end
 end
 
@@ -3983,4 +3984,5 @@ game:GetService("RunService").RenderStepped:Connect(function()
         )
     end
 end)
+
 return RayfieldLibrary
