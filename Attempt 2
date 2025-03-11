@@ -3907,4 +3907,80 @@ task.delay(4, function()
 	end
 end)
 
+
+
+-- Define library, UserInputService, and ContextActionService
+
+local function toggleUI(_actionName, inputState, _inputObject)
+    if inputState == Enum.UserInputState.Begin then
+        library:SetVisibility(not library:IsVisible())
+    end
+end
+
+-- Remember that laptops with touch screens exist
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+    ContextActionService:BindAction("ToggleUI", toggleUI, true)
+    ContextActionService:SetImage("ToggleUI", "rbxassetid://100698995249426")
+end
+
+-- Create a ScreenGui to hold the button
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create the round button
+local button = Instance.new("ImageButton")
+button.Parent = screenGui
+button.Size = UDim2.new(0, 50, 0, 50) -- Size of the button (50x50 pixels)
+button.Position = UDim2.new(0, 100, 0, 100) -- Initial position
+button.BackgroundTransparency = 1
+button.Image = "rbxassetid://74790421902324" -- Your specified asset ID
+button.ScaleType = Enum.ScaleType.Fit
+
+-- Make the button round
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(1, 0) -- Makes it fully circular
+corner.Parent = button
+
+-- Connect the toggle function to button click
+button.MouseButton1Click:Connect(function()
+    toggleUI("ToggleUI", Enum.UserInputState.Begin, nil)
+end)
+
+-- Dragging functionality
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+button.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = button.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+button.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if dragging and dragInput then
+        local delta = dragInput.Position - dragStart
+        button.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
 return RayfieldLibrary
