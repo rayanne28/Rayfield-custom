@@ -3929,7 +3929,7 @@ if existingGui then
     existingGui:Destroy()
 end
 
-screenGui.Name = "RayfieldExtras"
+
 
 
 -- Create the round button
