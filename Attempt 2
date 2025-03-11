@@ -3984,5 +3984,75 @@ game:GetService("RunService").RenderStepped:Connect(function()
         )
     end
 end)
+-- Create the FPS and Ping label
+local statsFrame = Instance.new("Frame")
+statsFrame.Parent = screenGui
+statsFrame.Size = UDim2.new(0, 120, 0, 30) -- Small size for the label
+statsFrame.Position = UDim2.new(0.5, -60, 1, -40) -- Bottom center, slightly above edge
+statsFrame.BackgroundColor3 = library.Theme.Default.ElementBackground -- Match Rayfield theme
+statsFrame.BorderSizePixel = 0
+statsFrame.BackgroundTransparency = 0.2
 
+-- Add rounded corners to the frame
+local statsCorner = Instance.new("UICorner")
+statsCorner.CornerRadius = UDim.new(0, 8) -- Slightly rounded, not fully circular
+statsCorner.Parent = statsFrame
+
+-- Add a UIStroke for border
+local statsStroke = Instance.new("UIStroke")
+statsStroke.Color = library.Theme.Default.ElementStroke
+statsStroke.Thickness = 1
+statsStroke.Parent = statsFrame
+
+-- Add the text label inside the frame
+local statsLabel = Instance.new("TextLabel")
+statsLabel.Parent = statsFrame
+statsLabel.Size = UDim2.new(1, 0, 1, 0)
+statsLabel.BackgroundTransparency = 1
+statsLabel.Text = "FPS: 0 | Ping: 0"
+statsLabel.TextColor3 = library.Theme.Default.TextColor
+statsLabel.TextSize = 14
+statsLabel.Font = Enum.Font.SourceSans
+statsLabel.TextScaled = false
+statsLabel.TextXAlignment = Enum.TextXAlignment.Center
+statsLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+-- Function to update FPS and Ping
+local lastFrameTime = tick()
+local frameCount = 0
+local function updateStats()
+    -- Calculate FPS
+    frameCount = frameCount + 1
+    local currentTime = tick()
+    if currentTime - lastFrameTime >= 1 then
+        local fps = math.floor(frameCount / (currentTime - lastFrameTime))
+        frameCount = 0
+        lastFrameTime = currentTime
+        
+        -- Get Ping (approximation using Roblox's Network stats)
+        local ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() + 0.5)
+        
+        -- Update label text
+        statsLabel.Text = string.format("FPS: %d | Ping: %d", fps, ping)
+    end
+end
+
+-- Connect to RenderStepped for real-time updates
+game:GetService("RunService").RenderStepped:Connect(updateStats)
+
+-- Sync visibility with RayfieldLibrary
+local function syncVisibility()
+    statsFrame.Visible = library:IsVisible()
+end
+
+-- Initial visibility sync
+syncVisibility()
+
+-- Connect to visibility changes
+library:SetVisibility(library:IsVisible()) -- Trigger initial state
+game:GetService("RunService").Heartbeat:Connect(function()
+    if statsFrame.Visible ~= library:IsVisible() then
+        syncVisibility()
+    end
+end)
 return RayfieldLibrary
