@@ -1911,6 +1911,7 @@ function Library:CreateSection(Parent, Title)
 			Callback = o.Callback
 			Type = o.Suffix or o.Type
 			Flag = o.Flag
+			Rounding = o.Rounding
 		end
 		Min = tonumber(Min) or 0
 		Max = tonumber(Max) or 100
@@ -1918,7 +1919,8 @@ function Library:CreateSection(Parent, Title)
 		local UserCallback = typeof(Callback) == "function" and Callback or function() end
 		Callback = UserCallback
 		local Suffix = typeof(Type) == "string" and Type or ""
-
+		Rounding = tonumber(Rounding) or 0
+		local RoundFactor = 10 ^ Rounding
 		local Container = LibRef:CreateInstance("Frame", {
 			Name = "Slider_" .. tostring(Name or "Slider"),
 			Parent = self.Frame,
@@ -2038,7 +2040,7 @@ function Library:CreateSection(Parent, Title)
 			local absW = Track.AbsoluteSize.X
 			if absW <= 0 then return end
 			local t = MathClamp((px - absX) / absW, 0, 1)
-			Value = MathFloor(Min + t * (Max - Min) + 0.5)
+			Value = MathFloor((Min + t * (Max - Min)) * RoundFactor + 0.5) / RoundFactor
 			Render()
 			Callback(Value)
 		end
@@ -2068,7 +2070,7 @@ function Library:CreateSection(Parent, Title)
 		Callback = function(v) NotifyFlag(v); UserCallback(v) end
 		function SliderObj:Get() return Value end
 		function SliderObj:Set(v)
-			Value = MathClamp(tonumber(v) or Value, Min, Max)
+			Value = MathFloor(MathClamp(tonumber(v) or Value, Min, Max) * RoundFactor + 0.5) / RoundFactor
 			Render()
 			Callback(Value)
 		end
