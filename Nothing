@@ -50,12 +50,21 @@ local Library = {
 
 local function TweenNew(Inst, Info, Props)
 	local Speed = Library.AnimationSpeed or 1
-	if Speed < 0.05 then Speed = 0.05 end
+	if Speed < 0.05 then
+		Speed = 0.05
+	end
 	local Scale = 1 / Speed
 	if Scale == 1 then
 		return TweenService:Create(Inst, Info, Props)
 	end
-	local Scaled = TweenInfo.new(Info.Time * Scale, Info.EasingStyle, Info.EasingDirection, Info.RepeatCount, Info.Reverses, Info.DelayTime)
+	local Scaled = TweenInfo.new(
+		Info.Time * Scale,
+		Info.EasingStyle,
+		Info.EasingDirection,
+		Info.RepeatCount,
+		Info.Reverses,
+		Info.DelayTime
+	)
 	return TweenService:Create(Inst, Scaled, Props)
 end
 
@@ -63,15 +72,15 @@ local Palette = {
 	Default = {
 		Background = Hex("0F1014"),
 		SubBackground = Hex("12141A"),
-        TabBackground = Hex("171821"),
+		TabBackground = Hex("171821"),
 		Divider = Hex("1B1E28"),
 		SubText = Hex("4A4C57"),
-        Accent = Hex("70D5D4"),
-        AccentTwo = Hex("437C82"),
-        AccentBright = Hex("B5F0EF"),
-        SectionBackground = Hex("12141A"),
-        ColorBg = Hex("151720"),
-        ColorBg2 = Hex("1E1F2A"),
+		Accent = Hex("70D5D4"),
+		AccentTwo = Hex("437C82"),
+		AccentBright = Hex("B5F0EF"),
+		SectionBackground = Hex("12141A"),
+		ColorBg = Hex("151720"),
+		ColorBg2 = Hex("1E1F2A"),
 	},
 }
 
@@ -147,7 +156,9 @@ getgenv().Library = Library
 Library._FlagSerializers = Library._FlagSerializers or {}
 
 function Library:RegisterFlagSerializer(name, ser)
-	if not name or name == "" then return end
+	if not name or name == "" then
+		return
+	end
 	self._FlagSerializers[name] = ser
 end
 
@@ -172,7 +183,9 @@ function Library:DeserializeFlags(content)
 end
 
 function Library:RegisterFlag(category, flag, obj, initialValue)
-	if not flag or flag == "" then return function() end end
+	if not flag or flag == "" then
+		return function() end
+	end
 	obj.Flag = flag
 	obj.Value = initialValue
 	obj._changedListeners = {}
@@ -191,7 +204,6 @@ function Library:RegisterFlag(category, flag, obj, initialValue)
 		end
 	end
 end
-
 
 -- Signals
 function Library:Connection(Signal, Callback)
@@ -245,7 +257,9 @@ function Library:RefreshPalette()
 			table.remove(self._ThemedProperties, i)
 		else
 			local c = Palette.Default[b.Key]
-			if c then b.Instance[b.Property] = c end
+			if c then
+				b.Instance[b.Property] = c
+			end
 		end
 	end
 	for i = #self._ThemedGradients, 1, -1 do
@@ -274,24 +288,44 @@ function Library:RegisterFont(Name, Url, Weight, Style)
 		delfile(DescPath)
 	end
 
-	writefile(DescPath, HttpService:JSONEncode({
-		name = Name,
-		faces = {
-			{ name = "Regular", weight = Weight or 400, style = Style or "Normal", assetId = getcustomasset(TtfPath) },
-		},
-	}))
+	writefile(
+		DescPath,
+		HttpService:JSONEncode({
+			name = Name,
+			faces = {
+				{
+					name = "Regular",
+					weight = Weight or 400,
+					style = Style or "Normal",
+					assetId = getcustomasset(TtfPath),
+				},
+			},
+		})
+	)
 
 	return getcustomasset(DescPath)
 end
 
 Library.Fonts = {
 	Regular = Font.new(
-		Library:RegisterFont("InterMedium", "https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-Medium.ttf", 200, "Normal"),
-		Enum.FontWeight.Regular, Enum.FontStyle.Normal
+		Library:RegisterFont(
+			"InterMedium",
+			"https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-Medium.ttf",
+			200,
+			"Normal"
+		),
+		Enum.FontWeight.Regular,
+		Enum.FontStyle.Normal
 	),
 	SemiBold = Font.new(
-		Library:RegisterFont("InterSemiBold", "https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-SemiBold.ttf", 200, "Normal"),
-		Enum.FontWeight.Regular, Enum.FontStyle.Normal
+		Library:RegisterFont(
+			"InterSemiBold",
+			"https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-SemiBold.ttf",
+			200,
+			"Normal"
+		),
+		Enum.FontWeight.Regular,
+		Enum.FontStyle.Normal
 	),
 }
 
@@ -492,12 +526,18 @@ function Library:EnsureColumns(Host)
 		local viewH = Scroll.AbsoluteWindowSize.Y
 		local canvasH = Scroll.AbsoluteCanvasSize.Y
 		local maxY = MathMax(0, canvasH - viewH)
-		if TargetY < 0 then TargetY = 0 end
-		if TargetY > maxY then TargetY = maxY end
+		if TargetY < 0 then
+			TargetY = 0
+		end
+		if TargetY > maxY then
+			TargetY = maxY
+		end
 	end
 
 	LibRef:Connection(Scroll.InputChanged, function(input)
-		if input.UserInputType ~= Enum.UserInputType.MouseWheel then return end
+		if input.UserInputType ~= Enum.UserInputType.MouseWheel then
+			return
+		end
 		TargetY = TargetY - input.Position.Z * 90
 		ClampTarget()
 	end)
@@ -519,7 +559,10 @@ function Library:EnsureColumns(Host)
 	local dragging = false
 	local dragStartY, startScroll
 	LibRef:Connection(ScrollbarThumb.InputBegan, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			dragging = true
 			dragStartY = input.Position.Y
 			startScroll = Scroll.CanvasPosition.Y
@@ -527,20 +570,32 @@ function Library:EnsureColumns(Host)
 		end
 	end)
 	LibRef:Connection(UserInputService.InputEnded, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			dragging = false
 			LibRef._scrollbarDragging = false
 		end
 	end)
 	LibRef:Connection(UserInputService.InputChanged, function(input)
-		if not dragging then return end
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
+		if not dragging then
+			return
+		end
+		if
+			input.UserInputType ~= Enum.UserInputType.MouseMovement
+			and input.UserInputType ~= Enum.UserInputType.Touch
+		then
+			return
+		end
 		local viewH = Scroll.AbsoluteWindowSize.Y
 		local canvasH = Scroll.AbsoluteCanvasSize.Y
 		local trackH = ScrollbarTrack.AbsoluteSize.Y
 		local thumbH = MathMax(trackH * (viewH / canvasH), 20)
 		local trackRange = trackH - thumbH
-		if trackRange <= 0 then return end
+		if trackRange <= 0 then
+			return
+		end
 		local dy = input.Position.Y - dragStartY
 		local deltaScroll = (dy / trackRange) * (canvasH - viewH)
 		TargetY = MathClamp(startScroll + deltaScroll, 0, canvasH - viewH)
@@ -569,37 +624,54 @@ end
 
 local KeybindModes = { "Hold", "Toggle", "Always" }
 local function KeyDisplayName(k)
-	if k == nil then return "None" end
-	if KeyNames[k] then return KeyNames[k] end
-	if typeof(k) == "EnumItem" then return k.Name end
+	if k == nil then
+		return "None"
+	end
+	if KeyNames[k] then
+		return KeyNames[k]
+	end
+	if typeof(k) == "EnumItem" then
+		return k.Name
+	end
 	return tostring(k)
 end
 local function ParseKeyName(n)
-	if n == nil or n == "" or n == "None" then return nil end
+	if n == nil or n == "" or n == "None" then
+		return nil
+	end
 	for key, name in pairs(KeyNames) do
-		if name == n then return key end
+		if name == n then
+			return key
+		end
 	end
 	for _, item in ipairs(Enum.KeyCode:GetEnumItems()) do
-		if item.Name == n then return item end
+		if item.Name == n then
+			return item
+		end
 	end
 	for _, item in ipairs(Enum.UserInputType:GetEnumItems()) do
-		if item.Name == n then return item end
+		if item.Name == n then
+			return item
+		end
 	end
 	return nil
 end
 
-Library.KeybindList = Library.KeybindList or {
-	Entries = {},
-	OrderedIds = {},
-	IsVisible = true,
-	Gui = nil,
-	Root = nil,
-	Rows = nil,
-}
+Library.KeybindList = Library.KeybindList
+	or {
+		Entries = {},
+		OrderedIds = {},
+		IsVisible = true,
+		Gui = nil,
+		Root = nil,
+		Rows = nil,
+	}
 
 local function EnsureKeybindList()
 	local KL = Library.KeybindList
-	if KL.Gui and KL.Gui.Parent then return end
+	if KL.Gui and KL.Gui.Parent then
+		return
+	end
 
 	local Gui = Library:CreateInstance("ScreenGui", {
 		Name = "\0",
@@ -775,15 +847,21 @@ function Library.KeybindList:Refresh()
 			local F = Item.Frame
 			TweenNew(F, RowTween, { GroupTransparency = 1 }):Play()
 			task.delay(RowTween.Time + 0.02, function()
-				if F and F.Parent then F:Destroy() end
+				if F and F.Parent then
+					F:Destroy()
+				end
 			end)
 		end
 	end
 
 	local Visible = Order > 0
 	self.Rows.Visible = Visible
-	if self.HeaderBottomCoverup then self.HeaderBottomCoverup.Visible = Visible end
-	if self.HeaderDivider then self.HeaderDivider.Visible = Visible end
+	if self.HeaderBottomCoverup then
+		self.HeaderBottomCoverup.Visible = Visible
+	end
+	if self.HeaderDivider then
+		self.HeaderDivider.Visible = Visible
+	end
 end
 
 function Library.KeybindList:Register(Id, Name, Key, Active)
@@ -804,17 +882,26 @@ function Library.KeybindList:Update(Id, Name, Key, Active)
 		return
 	end
 	local Entry = self.Entries[Id]
-	if Name ~= nil then Entry.Name = Name end
+	if Name ~= nil then
+		Entry.Name = Name
+	end
 	Entry.Key = Key
-	if Active ~= nil then Entry.Active = Active == true end
+	if Active ~= nil then
+		Entry.Active = Active == true
+	end
 	self:Refresh()
 end
 
 function Library.KeybindList:Unregister(Id)
-	if not self.Entries[Id] then return end
+	if not self.Entries[Id] then
+		return
+	end
 	self.Entries[Id] = nil
 	for i, v in ipairs(self.OrderedIds) do
-		if v == Id then table.remove(self.OrderedIds, i) break end
+		if v == Id then
+			table.remove(self.OrderedIds, i)
+			break
+		end
 	end
 	self:Refresh()
 end
@@ -832,15 +919,25 @@ Library.Notifications = Library.Notifications or {
 }
 
 local NotifyTypeColors = {
-	info = function() return Palette.Default.Accent end,
-	success = function() return Hex("7ED382") end,
-	warning = function() return Hex("E8B857") end,
-	error = function() return Hex("E8575C") end,
+	info = function()
+		return Palette.Default.Accent
+	end,
+	success = function()
+		return Hex("7ED382")
+	end,
+	warning = function()
+		return Hex("E8B857")
+	end,
+	error = function()
+		return Hex("E8575C")
+	end,
 }
 
 local function EnsureNotifyHost()
 	local N = Library.Notifications
-	if N.Gui and N.Gui.Parent then return end
+	if N.Gui and N.Gui.Parent then
+		return
+	end
 
 	local Gui = Library:CreateInstance("ScreenGui", {
 		Name = "\0",
@@ -879,7 +976,11 @@ function Library.Notifications:Refresh(Animated)
 	for _, Item in ipairs(List) do
 		local Target = NewUDim2(0, 0, 0, Y)
 		if Animated then
-			TweenNew(Item.Frame, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = Target }):Play()
+			TweenNew(
+				Item.Frame,
+				TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+				{ Position = Target }
+			):Play()
 		else
 			Item.Frame.Position = Target
 		end
@@ -892,7 +993,9 @@ function Library:Notify(opts)
 	local Title = tostring(opts.Title or opts.Name or "Message")
 	local Desc = tostring(opts.Description or opts.Info or opts.Text or "")
 	local Life = tonumber(opts.Duration) or 4
-	if Life <= 0 then Life = 0.1 end
+	if Life <= 0 then
+		Life = 0.1
+	end
 	local Type = tostring(opts.Type or "info"):lower()
 	local AccentFn = NotifyTypeColors[Type] or NotifyTypeColors.info
 	local Accent = AccentFn()
@@ -1018,16 +1121,23 @@ function Library:Notify(opts)
 
 	local Closed = false
 	local function CloseNow()
-		if Closed then return end
+		if Closed then
+			return
+		end
 		Closed = true
 		for I, Item in ipairs(self.Notifications.Queue) do
-			if Item == Entry then table.remove(self.Notifications.Queue, I); break end
+			if Item == Entry then
+				table.remove(self.Notifications.Queue, I)
+				break
+			end
 		end
 		TweenNew(Card, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			Position = NewUDim2(1, 380, 0, Card.Position.Y.Offset),
 		}):Play()
 		task.delay(0.25, function()
-			if Card and Card.Parent then Card:Destroy() end
+			if Card and Card.Parent then
+				Card:Destroy()
+			end
 			self.Notifications:Refresh(true)
 		end)
 	end
@@ -1043,7 +1153,10 @@ function Library:MountKeybind(parent, opts)
 	local Key = opts.Key
 	local ModeIdx = 1
 	for i, m in ipairs(KeybindModes) do
-		if m == opts.Mode then ModeIdx = i break end
+		if m == opts.Mode then
+			ModeIdx = i
+			break
+		end
 	end
 	local Callback = typeof(opts.Callback) == "function" and opts.Callback or function() end
 	local ListName = typeof(opts.Name) == "string" and opts.Name or nil
@@ -1139,8 +1252,12 @@ function Library:MountKeybind(parent, opts)
 	local ListId = tostring(KbObj)
 	local Active = false
 	local function IsListActive()
-		if Key == nil then return false end
-		if KeybindModes[ModeIdx] == "Always" then return true end
+		if Key == nil then
+			return false
+		end
+		if KeybindModes[ModeIdx] == "Always" then
+			return true
+		end
 		return Active == true
 	end
 	local function SyncList()
@@ -1150,7 +1267,9 @@ function Library:MountKeybind(parent, opts)
 	end
 
 	local function FireActive(newActive)
-		if Active == newActive then return end
+		if Active == newActive then
+			return
+		end
 		Active = newActive
 		SyncList()
 		Callback(Active)
@@ -1177,12 +1296,16 @@ function Library:MountKeybind(parent, opts)
 		Key = nil
 		Listening = false
 		Render()
-		if KeybindModes[ModeIdx] == "Hold" then FireActive(false) end
+		if KeybindModes[ModeIdx] == "Hold" then
+			FireActive(false)
+		end
 		SyncList()
 	end)
 	LibRef:Connection(UserInputService.InputBegan, function(input, processed)
 		if Listening then
-			if processed then return end
+			if processed then
+				return
+			end
 			local t = input.UserInputType
 			if t == Enum.UserInputType.Keyboard then
 				if input.KeyCode == Enum.KeyCode.Escape then
@@ -1190,7 +1313,11 @@ function Library:MountKeybind(parent, opts)
 				else
 					Key = input.KeyCode
 				end
-			elseif t == Enum.UserInputType.MouseButton1 or t == Enum.UserInputType.MouseButton2 or t == Enum.UserInputType.MouseButton3 then
+			elseif
+				t == Enum.UserInputType.MouseButton1
+				or t == Enum.UserInputType.MouseButton2
+				or t == Enum.UserInputType.MouseButton3
+			then
 				Key = t
 			else
 				return
@@ -1200,8 +1327,12 @@ function Library:MountKeybind(parent, opts)
 			SyncList()
 			return
 		end
-		if processed then return end
-		if not Key or KeybindModes[ModeIdx] == "Always" then return end
+		if processed then
+			return
+		end
+		if not Key or KeybindModes[ModeIdx] == "Always" then
+			return
+		end
 		local pressed = input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType
 		if pressed == Key then
 			if KeybindModes[ModeIdx] == "Toggle" then
@@ -1212,8 +1343,12 @@ function Library:MountKeybind(parent, opts)
 		end
 	end)
 	LibRef:Connection(UserInputService.InputEnded, function(input, processed)
-		if processed then return end
-		if not Key or KeybindModes[ModeIdx] ~= "Hold" then return end
+		if processed then
+			return
+		end
+		if not Key or KeybindModes[ModeIdx] ~= "Hold" then
+			return
+		end
 		local pressed = input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType
 		if pressed == Key then
 			FireActive(false)
@@ -1225,15 +1360,22 @@ function Library:MountKeybind(parent, opts)
 		Library.KeybindList:Register(ListId, ListName, Key, IsListActive())
 	end
 	if KeybindModes[ModeIdx] == "Always" then
-		task.defer(function() FireActive(true) end)
+		task.defer(function()
+			FireActive(true)
+		end)
 	end
 
-	function KbObj:Get() return Key, KeybindModes[ModeIdx], Active end
+	function KbObj:Get()
+		return Key, KeybindModes[ModeIdx], Active
+	end
 	function KbObj:Set(k, m)
 		Key = k
 		if m then
 			for i, mm in ipairs(KeybindModes) do
-				if mm == m then ModeIdx = i break end
+				if mm == m then
+					ModeIdx = i
+					break
+				end
 			end
 		end
 		Render()
@@ -1486,7 +1628,9 @@ function Library:MountColorpicker(Swatch, Default, Callback)
 	local function UpdateSV(px, py)
 		local ap = SVBox.AbsolutePosition
 		local asz = SVBox.AbsoluteSize
-		if asz.X <= 0 or asz.Y <= 0 then return end
+		if asz.X <= 0 or asz.Y <= 0 then
+			return
+		end
 		s = MathClamp((px - ap.X) / asz.X, 0, 1)
 		v = 1 - MathClamp((py - ap.Y) / asz.Y, 0, 1)
 		ApplyColor()
@@ -1494,44 +1638,71 @@ function Library:MountColorpicker(Swatch, Default, Callback)
 	local function UpdateHue(py)
 		local ap = HueBar.AbsolutePosition
 		local asz = HueBar.AbsoluteSize
-		if asz.Y <= 0 then return end
+		if asz.Y <= 0 then
+			return
+		end
 		h = MathClamp((py - ap.Y) / asz.Y, 0, 1)
 		ApplyColor()
 	end
 	local function UpdateAlpha(py)
 		local ap = AlphaBar.AbsolutePosition
 		local asz = AlphaBar.AbsoluteSize
-		if asz.Y <= 0 then return end
+		if asz.Y <= 0 then
+			return
+		end
 		a = MathClamp((py - ap.Y) / asz.Y, 0, 1)
 		ApplyColor()
 	end
 
 	LibRef:Connection(SVBox.InputBegan, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			DraggingSV = true
 			UpdateSV(input.Position.X, input.Position.Y)
 		end
 	end)
 	LibRef:Connection(HueBar.InputBegan, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			DraggingHue = true
 			UpdateHue(input.Position.Y)
 		end
 	end)
 	LibRef:Connection(AlphaBar.InputBegan, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			DraggingAlpha = true
 			UpdateAlpha(input.Position.Y)
 		end
 	end)
 	LibRef:Connection(UserInputService.InputChanged, function(input)
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
-		if DraggingSV then UpdateSV(input.Position.X, input.Position.Y) end
-		if DraggingHue then UpdateHue(input.Position.Y) end
-		if DraggingAlpha then UpdateAlpha(input.Position.Y) end
+		if
+			input.UserInputType ~= Enum.UserInputType.MouseMovement
+			and input.UserInputType ~= Enum.UserInputType.Touch
+		then
+			return
+		end
+		if DraggingSV then
+			UpdateSV(input.Position.X, input.Position.Y)
+		end
+		if DraggingHue then
+			UpdateHue(input.Position.Y)
+		end
+		if DraggingAlpha then
+			UpdateAlpha(input.Position.Y)
+		end
 	end)
 	LibRef:Connection(UserInputService.InputEnded, function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
 			DraggingSV = false
 			DraggingHue = false
 			DraggingAlpha = false
@@ -1566,8 +1737,15 @@ function Library:MountColorpicker(Swatch, Default, Callback)
 		SetOpen(not Open)
 	end)
 	LibRef:Connection(UserInputService.InputBegan, function(input)
-		if not Open then return end
-		if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+		if not Open then
+			return
+		end
+		if
+			input.UserInputType ~= Enum.UserInputType.MouseButton1
+			and input.UserInputType ~= Enum.UserInputType.Touch
+		then
+			return
+		end
 		local mx, my = input.Position.X, input.Position.Y
 		local function inside(g)
 			local p, s2 = g.AbsolutePosition, g.AbsoluteSize
@@ -1581,7 +1759,9 @@ function Library:MountColorpicker(Swatch, Default, Callback)
 	ApplyColor()
 
 	local CpObj = { Swatch = Swatch, Panel = Panel }
-	function CpObj:Get() return Color, 1 - a end
+	function CpObj:Get()
+		return Color, 1 - a
+	end
 	function CpObj:Set(c, transparency)
 		if typeof(c) == "Color3" then
 			h, s, v = c:ToHSV()
@@ -1770,10 +1950,19 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		local ToggleObj = { Name = tostring(Name or "Toggle"), Button = Btn, Box = Box, Check = Check, Label = Lbl }
-		LibRef:RegisterThemeRenderer(function() if Btn.Parent then Render() end end)
+		LibRef:RegisterThemeRenderer(function()
+			if Btn.Parent then
+				Render()
+			end
+		end)
 		local NotifyFlag = LibRef:RegisterFlag("Toggles", Flag, ToggleObj, State)
-		Callback = function(s) NotifyFlag(s); UserCallback(s) end
-		function ToggleObj:Get() return State end
+		Callback = function(s)
+			NotifyFlag(s)
+			UserCallback(s)
+		end
+		function ToggleObj:Get()
+			return State
+		end
 		function ToggleObj:Set(v)
 			State = v == true
 			Render()
@@ -1807,7 +1996,9 @@ function Library:CreateSection(Parent, Title)
 				if Cp and Cp.Flag then
 					Cp.Value = c
 					Cp.Transparency = t
-					for _, lcb in ipairs(Cp._changedListeners) do lcb(c, t) end
+					for _, lcb in ipairs(Cp._changedListeners) do
+						lcb(c, t)
+					end
 				end
 				UserCpCb(c, t)
 			end)
@@ -1816,26 +2007,36 @@ function Library:CreateSection(Parent, Title)
 				Cp.Value = Color
 				Cp.Transparency = 0
 				Cp._changedListeners = {}
-				function Cp:OnChanged(cb) Insert(self._changedListeners, cb); return self end
-				function Cp:SetValue(c, t) return self:Set(c, t) end
+				function Cp:OnChanged(cb)
+					Insert(self._changedListeners, cb)
+					return self
+				end
+				function Cp:SetValue(c, t)
+					return self:Set(c, t)
+				end
 				LibRef.Options[CpFlag] = Cp
 			end
-			LibRef:RegisterFlagSerializer((GroupboxObj and GroupboxObj.Name or "Section") .. "::ToggleColor::" .. tostring(Name or "Toggle"), {
-				serialize = function()
-					local c, t = Cp:Get()
-					return string.format("%d,%d,%d,%d",
-						MathFloor(c.R * 255 + 0.5),
-						MathFloor(c.G * 255 + 0.5),
-						MathFloor(c.B * 255 + 0.5),
-						MathFloor((t or 0) * 255 + 0.5))
-				end,
-				deserialize = function(s)
-					local r, g, b, a = s:match("^(%d+),(%d+),(%d+),(%d+)$")
-					if r then
-						Cp:Set(FromRgb(tonumber(r), tonumber(g), tonumber(b)), tonumber(a) / 255)
-					end
-				end,
-			})
+			LibRef:RegisterFlagSerializer(
+				(GroupboxObj and GroupboxObj.Name or "Section") .. "::ToggleColor::" .. tostring(Name or "Toggle"),
+				{
+					serialize = function()
+						local c, t = Cp:Get()
+						return string.format(
+							"%d,%d,%d,%d",
+							MathFloor(c.R * 255 + 0.5),
+							MathFloor(c.G * 255 + 0.5),
+							MathFloor(c.B * 255 + 0.5),
+							MathFloor((t or 0) * 255 + 0.5)
+						)
+					end,
+					deserialize = function(s)
+						local r, g, b, a = s:match("^(%d+),(%d+),(%d+),(%d+)$")
+						if r then
+							Cp:Set(FromRgb(tonumber(r), tonumber(g), tonumber(b)), tonumber(a) / 255)
+						end
+					end,
+				}
+			)
 			return Cp
 		end
 
@@ -1858,7 +2059,9 @@ function Library:CreateSection(Parent, Title)
 					ToggleObj:Set(active)
 					if Kb and Kb.Flag then
 						Kb.Value = active
-						for _, lcb in ipairs(Kb._changedListeners) do lcb(active) end
+						for _, lcb in ipairs(Kb._changedListeners) do
+							lcb(active)
+						end
 					end
 					UserKbCb(active)
 				end,
@@ -1869,20 +2072,30 @@ function Library:CreateSection(Parent, Title)
 				Kb.Flag = KbFlag
 				Kb.Value = false
 				Kb._changedListeners = {}
-				function Kb:OnChanged(cb) Insert(self._changedListeners, cb); return self end
-				function Kb:SetValue(k, m) Kb:Set(k, m) end
+				function Kb:OnChanged(cb)
+					Insert(self._changedListeners, cb)
+					return self
+				end
+				function Kb:SetValue(k, m)
+					Kb:Set(k, m)
+				end
 				LibRef.Options[KbFlag] = Kb
 			end
-			LibRef:RegisterFlagSerializer((GroupboxObj and GroupboxObj.Name or "Section") .. "::ToggleKeybind::" .. tostring(Name or "Toggle"), {
-				serialize = function()
-					local k, m = Kb:Get()
-					return (m or "Hold") .. "|" .. KeyDisplayName(k)
-				end,
-				deserialize = function(s)
-					local m, kn = s:match("^([^|]+)|(.*)$")
-					if m then Kb:Set(ParseKeyName(kn or ""), m) end
-				end,
-			})
+			LibRef:RegisterFlagSerializer(
+				(GroupboxObj and GroupboxObj.Name or "Section") .. "::ToggleKeybind::" .. tostring(Name or "Toggle"),
+				{
+					serialize = function()
+						local k, m = Kb:Get()
+						return (m or "Hold") .. "|" .. KeyDisplayName(k)
+					end,
+					deserialize = function(s)
+						local m, kn = s:match("^([^|]+)|(.*)$")
+						if m then
+							Kb:Set(ParseKeyName(kn or ""), m)
+						end
+					end,
+				}
+			)
 			return Kb
 		end
 
@@ -1891,8 +2104,12 @@ function Library:CreateSection(Parent, Title)
 		end)
 
 		LibRef:RegisterFlagSerializer(self.Name .. "::Toggle::" .. tostring(Name or "Toggle"), {
-			serialize = function() return State and "1" or "0" end,
-			deserialize = function(s) ToggleObj:Set(s == "1") end,
+			serialize = function()
+				return State and "1" or "0"
+			end,
+			deserialize = function(s)
+				ToggleObj:Set(s == "1")
+			end,
 		})
 
 		Render()
@@ -2038,7 +2255,9 @@ function Library:CreateSection(Parent, Title)
 		local function UpdateFromInput(px)
 			local absX = Track.AbsolutePosition.X
 			local absW = Track.AbsoluteSize.X
-			if absW <= 0 then return end
+			if absW <= 0 then
+				return
+			end
 			local t = MathClamp((px - absX) / absW, 0, 1)
 			Value = MathFloor((Min + t * (Max - Min)) * RoundFactor + 0.5) / RoundFactor
 			Render()
@@ -2046,29 +2265,53 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		LibRef:Connection(Track.InputBegan, function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if
+				input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				Dragging = true
 				UpdateFromInput(input.Position.X)
 			end
 		end)
 		LibRef:Connection(Track.InputEnded, function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if
+				input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				Dragging = false
 			end
 		end)
 		LibRef:Connection(UserInputService.InputChanged, function(input)
-			if not Dragging then return end
-			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if not Dragging then
+				return
+			end
+			if
+				input.UserInputType == Enum.UserInputType.MouseMovement
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				UpdateFromInput(input.Position.X)
 			end
 		end)
 
 		Render()
 
-		local SliderObj = { Name = tostring(Name or "Slider"), Container = Container, Track = Track, Fill = Fill, Thumb = Thumb, Label = Lbl, ValueLabel = Val }
+		local SliderObj = {
+			Name = tostring(Name or "Slider"),
+			Container = Container,
+			Track = Track,
+			Fill = Fill,
+			Thumb = Thumb,
+			Label = Lbl,
+			ValueLabel = Val,
+		}
 		local NotifyFlag = LibRef:RegisterFlag("Options", Flag, SliderObj, Value)
-		Callback = function(v) NotifyFlag(v); UserCallback(v) end
-		function SliderObj:Get() return Value end
+		Callback = function(v)
+			NotifyFlag(v)
+			UserCallback(v)
+		end
+		function SliderObj:Get()
+			return Value
+		end
 		function SliderObj:Set(v)
 			Value = MathFloor(MathClamp(tonumber(v) or Value, Min, Max) * RoundFactor + 0.5) / RoundFactor
 			Render()
@@ -2076,8 +2319,12 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		LibRef:RegisterFlagSerializer(self.Name .. "::Slider::" .. tostring(Name or "Slider"), {
-			serialize = function() return tostring(Value) end,
-			deserialize = function(s) SliderObj:Set(tonumber(s)) end,
+			serialize = function()
+				return tostring(Value)
+			end,
+			deserialize = function(s)
+				SliderObj:Set(tonumber(s))
+			end,
 		})
 		return SliderObj
 	end
@@ -2105,7 +2352,9 @@ function Library:CreateSection(Parent, Title)
 		Max = tonumber(Max) or 100
 		local Low = MathClamp(tonumber(DefaultLow) or Min, Min, Max)
 		local High = MathClamp(tonumber(DefaultHigh) or Max, Min, Max)
-		if Low > High then Low, High = High, Low end
+		if Low > High then
+			Low, High = High, Low
+		end
 		local UserCallback = typeof(Callback) == "function" and Callback or function() end
 		Callback = UserCallback
 		local Suffix = typeof(Type) == "string" and Type or ""
@@ -2242,7 +2491,9 @@ function Library:CreateSection(Parent, Title)
 		local function GetT(px)
 			local absX = Track.AbsolutePosition.X
 			local absW = Track.AbsoluteSize.X
-			if absW <= 0 then return 0 end
+			if absW <= 0 then
+				return 0
+			end
 			return MathClamp((px - absX) / absW, 0, 1)
 		end
 		local function ValueFromT(t)
@@ -2250,7 +2501,10 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		LibRef:Connection(Track.InputBegan, function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if
+				input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				local t = GetT(input.Position.X)
 				local lowT = (Low - Min) / (Max - Min)
 				local highT = (High - Min) / (Max - Min)
@@ -2264,13 +2518,21 @@ function Library:CreateSection(Parent, Title)
 			end
 		end)
 		LibRef:Connection(Track.InputEnded, function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if
+				input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				DraggingThumb = nil
 			end
 		end)
 		LibRef:Connection(UserInputService.InputChanged, function(input)
-			if not DraggingThumb then return end
-			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if not DraggingThumb then
+				return
+			end
+			if
+				input.UserInputType == Enum.UserInputType.MouseMovement
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
 				local t = GetT(input.Position.X)
 				if DraggingThumb == "low" then
 					Low = MathMin(ValueFromT(t), High)
@@ -2281,10 +2543,24 @@ function Library:CreateSection(Parent, Title)
 			end
 		end)
 
-		local RangeObj = { Name = tostring(Name or "Range"), Container = Container, Track = Track, Fill = Fill, LowThumb = LowThumb, HighThumb = HighThumb, Label = Lbl, ValueLabel = Val }
+		local RangeObj = {
+			Name = tostring(Name or "Range"),
+			Container = Container,
+			Track = Track,
+			Fill = Fill,
+			LowThumb = LowThumb,
+			HighThumb = HighThumb,
+			Label = Lbl,
+			ValueLabel = Val,
+		}
 		local NotifyFlag = LibRef:RegisterFlag("Options", Flag, RangeObj, { Min = Low, Max = High })
-		Callback = function(lo, hi) NotifyFlag({ Min = lo, Max = hi }); UserCallback(lo, hi) end
-		function RangeObj:Get() return Low, High end
+		Callback = function(lo, hi)
+			NotifyFlag({ Min = lo, Max = hi })
+			UserCallback(lo, hi)
+		end
+		function RangeObj:Get()
+			return Low, High
+		end
 		function RangeObj:Set(lo, hi)
 			if typeof(lo) == "table" then
 				hi = lo.Max or lo[2]
@@ -2292,15 +2568,21 @@ function Library:CreateSection(Parent, Title)
 			end
 			Low = MathClamp(tonumber(lo) or Low, Min, Max)
 			High = MathClamp(tonumber(hi) or High, Min, Max)
-			if Low > High then Low, High = High, Low end
+			if Low > High then
+				Low, High = High, Low
+			end
 			UpdateValues()
 		end
 
 		LibRef:RegisterFlagSerializer(self.Name .. "::Range::" .. tostring(Name or "Range"), {
-			serialize = function() return tostring(Low) .. "," .. tostring(High) end,
+			serialize = function()
+				return tostring(Low) .. "," .. tostring(High)
+			end,
 			deserialize = function(s)
 				local l, hi = s:match("^([^,]+),([^,]+)$")
-				if l and hi then RangeObj:Set(tonumber(l), tonumber(hi)) end
+				if l and hi then
+					RangeObj:Set(tonumber(l), tonumber(hi))
+				end
 			end,
 		})
 		return RangeObj
@@ -2326,21 +2608,30 @@ function Library:CreateSection(Parent, Title)
 		local SelectedOrder = {}
 		local function AddSel(v)
 			v = tostring(v)
-			if SelectedSet[v] then return end
+			if SelectedSet[v] then
+				return
+			end
 			SelectedSet[v] = true
 			Insert(SelectedOrder, v)
 		end
 		local function RemoveSel(v)
 			v = tostring(v)
-			if not SelectedSet[v] then return end
+			if not SelectedSet[v] then
+				return
+			end
 			SelectedSet[v] = nil
 			for i, item in ipairs(SelectedOrder) do
-				if item == v then table.remove(SelectedOrder, i) break end
+				if item == v then
+					table.remove(SelectedOrder, i)
+					break
+				end
 			end
 		end
 		if Multi then
 			if typeof(Default) == "table" then
-				for _, v in ipairs(Default) do AddSel(v) end
+				for _, v in ipairs(Default) do
+					AddSel(v)
+				end
 			end
 		end
 		local Selected = tostring(Default or Options[1] or "")
@@ -2393,7 +2684,9 @@ function Library:CreateSection(Parent, Title)
 		})
 
 		local function MultiDisplay()
-			if #SelectedOrder == 0 then return "None" end
+			if #SelectedOrder == 0 then
+				return "None"
+			end
 			return Concat(SelectedOrder, ", ")
 		end
 
@@ -2428,16 +2721,26 @@ function Library:CreateSection(Parent, Title)
 		})
 
 		local Gui = self.Frame:FindFirstAncestorOfClass("ScreenGui")
-		local List = LibRef:CreateInstance("CanvasGroup", {
+		local MaxVisibleItems = 5
+		local List = LibRef:CreateInstance("ScrollingFrame", {
 			Name = "DropdownList_" .. tostring(Name or "Dropdown"),
 			Parent = Gui,
 			Size = NewUDim2(0, 0, 0, 0),
-			AutomaticSize = Enum.AutomaticSize.Y,
 			BackgroundColor3 = Palette.Default.TabBackground,
 			BorderSizePixel = 0,
 			Visible = false,
-			GroupTransparency = 1,
 			ZIndex = 50,
+			CanvasSize = NewUDim2(0, 0, 0, 0),
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			ScrollingDirection = Enum.ScrollingDirection.Y,
+			ScrollingEnabled = true,
+			ScrollBarThickness = 6,
+			ScrollBarImageColor3 = Palette.Default.Accent,
+			ScrollBarImageTransparency = 0,
+			ScrollBarInset = Enum.ScrollBarInset.Always,
+			BorderSizePixel = 0,
+			BackgroundTransparency = 1,
+			Active = true,
 		})
 		LibRef:CreateInstance("UICorner", { Parent = List, CornerRadius = NewUDim(0, 6) })
 		LibRef:CreateInstance("UIListLayout", {
@@ -2460,20 +2763,21 @@ function Library:CreateSection(Parent, Title)
 				local bp = Btn.AbsolutePosition
 				local bs = Btn.AbsoluteSize
 				local finalY = bp.Y + bs.Y + 20
-				List.Size = NewUDim2(0, bs.X, 0, 0)
-				List.Position = NewUDim2(0, bp.X, 0, finalY - 6)
+				local count = math.min(#Options, MaxVisibleItems)
+				local height = count * 28 + 8
+				List.Size = NewUDim2(0, bs.X, 0, height)
+				List.Position = NewUDim2(0, bp.X, 0, finalY)
 				List.Visible = true
-				List.GroupTransparency = 1
+				List.BackgroundTransparency = 1
 				TweenNew(List, TweenDropdown, {
-					GroupTransparency = 0,
-					Position = NewUDim2(0, bp.X, 0, finalY),
+					BackgroundTransparency = 0,
 				}):Play()
 			else
 				TweenNew(List, TweenDropdown, {
-					GroupTransparency = 1,
+					BackgroundTransparency = 1,
 				}):Play()
 				task.delay(TweenDropdown.Time, function()
-					if List.GroupTransparency > 0.99 then
+					if List.BackgroundTransparency > 0.99 then
 						List.Visible = false
 					end
 				end)
@@ -2482,8 +2786,15 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		LibRef:Connection(UserInputService.InputBegan, function(input)
-			if not Open then return end
-			if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+			if not Open then
+				return
+			end
+			if
+				input.UserInputType ~= Enum.UserInputType.MouseButton1
+				and input.UserInputType ~= Enum.UserInputType.Touch
+			then
+				return
+			end
 			local mx, my = input.Position.X, input.Position.Y
 			local function inside(g)
 				local p, s = g.AbsolutePosition, g.AbsoluteSize
@@ -2497,7 +2808,9 @@ function Library:CreateSection(Parent, Title)
 		local OptButtons = {}
 		local OptColorTween = TweenInfo.new(0.18, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 		local function IsActive(v)
-			if Multi then return SelectedSet[tostring(v)] == true end
+			if Multi then
+				return SelectedSet[tostring(v)] == true
+			end
 			return tostring(v) == Selected
 		end
 		local function RefreshOptColors()
@@ -2516,7 +2829,11 @@ function Library:CreateSection(Parent, Title)
 		local function Select(val)
 			if Multi then
 				local v = tostring(val)
-				if SelectedSet[v] then RemoveSel(v) else AddSel(v) end
+				if SelectedSet[v] then
+					RemoveSel(v)
+				else
+					AddSel(v)
+				end
 				BtnLbl.Text = MultiDisplay()
 				RefreshOptColors()
 				Callback(SelectedOrder)
@@ -2531,9 +2848,20 @@ function Library:CreateSection(Parent, Title)
 
 		local function BuildOptions()
 			for _, entry in ipairs(OptButtons) do
-				if entry.Btn and entry.Btn.Parent then entry.Btn:Destroy() end
+				if entry.Btn and entry.Btn.Parent then
+					entry.Btn:Destroy()
+				end
 			end
 			OptButtons = {}
+			local count = math.min(#Options, MaxVisibleItems)
+			local height = count * 28 + 8
+			List.CanvasSize = NewUDim2(0, 0, 0, math.max(0, #Options * 28 + 8))
+			if Open then
+				local bp = Btn.AbsolutePosition
+				local bs = Btn.AbsoluteSize
+				List.Size = NewUDim2(0, bs.X, 0, height)
+				List.Position = NewUDim2(0, bp.X, 0, bp.Y + bs.Y + 20)
+			end
 			for i, opt in ipairs(Options) do
 				local OptBtn = LibRef:CreateInstance("TextButton", {
 					Name = "Opt_" .. tostring(i),
@@ -2561,7 +2889,8 @@ function Library:CreateSection(Parent, Title)
 					BorderSizePixel = 0,
 					FontFace = Library.Fonts.Regular,
 					Text = tostring(opt),
-					TextColor3 = IsActive(opt) and (Multi and Palette.Default.Accent or FromRgb(255, 255, 255)) or Palette.Default.SubText,
+					TextColor3 = IsActive(opt) and (Multi and Palette.Default.Accent or FromRgb(255, 255, 255))
+						or Palette.Default.SubText,
 					TextSize = 14,
 					TextXAlignment = Enum.TextXAlignment.Left,
 					TextYAlignment = Enum.TextYAlignment.Center,
@@ -2580,16 +2909,30 @@ function Library:CreateSection(Parent, Title)
 			SetOpen(not Open)
 		end)
 
-		local DropdownObj = { Name = tostring(Name or "Dropdown"), Container = Container, Button = Btn, Label = Lbl, List = List, Multi = Multi }
+		local DropdownObj = {
+			Name = tostring(Name or "Dropdown"),
+			Container = Container,
+			Button = Btn,
+			Label = Lbl,
+			List = List,
+			Multi = Multi,
+		}
 		local NotifyFlag = LibRef:RegisterFlag("Options", Flag, DropdownObj, Multi and SelectedOrder or Selected)
-		Callback = function(v) NotifyFlag(v); UserCallback(v) end
-		function DropdownObj:Get() return Multi and SelectedOrder or Selected end
+		Callback = function(v)
+			NotifyFlag(v)
+			UserCallback(v)
+		end
+		function DropdownObj:Get()
+			return Multi and SelectedOrder or Selected
+		end
 		function DropdownObj:Set(v)
 			if Multi then
 				SelectedSet = {}
 				SelectedOrder = {}
 				if typeof(v) == "table" then
-					for _, item in ipairs(v) do AddSel(item) end
+					for _, item in ipairs(v) do
+						AddSel(item)
+					end
 				end
 				BtnLbl.Text = MultiDisplay()
 				RefreshOptColors()
@@ -2604,17 +2947,25 @@ function Library:CreateSection(Parent, Title)
 				local kept = {}
 				for _, v in ipairs(SelectedOrder) do
 					for _, opt in ipairs(Options) do
-						if tostring(opt) == v then Insert(kept, v); break end
+						if tostring(opt) == v then
+							Insert(kept, v)
+							break
+						end
 					end
 				end
 				SelectedSet = {}
 				SelectedOrder = {}
-				for _, v in ipairs(kept) do AddSel(v) end
+				for _, v in ipairs(kept) do
+					AddSel(v)
+				end
 				BtnLbl.Text = MultiDisplay()
 			else
 				local found = false
 				for _, opt in ipairs(Options) do
-					if tostring(opt) == Selected then found = true; break end
+					if tostring(opt) == Selected then
+						found = true
+						break
+					end
 				end
 				if not found then
 					Selected = tostring(Options[1] or "")
@@ -2626,14 +2977,20 @@ function Library:CreateSection(Parent, Title)
 
 		LibRef:RegisterFlagSerializer(self.Name .. "::Dropdown::" .. tostring(Name or "Dropdown"), {
 			serialize = function()
-				if Multi then return Concat(SelectedOrder, "\31") end
+				if Multi then
+					return Concat(SelectedOrder, "\31")
+				end
 				return Selected
 			end,
 			deserialize = function(s)
-				if not s or s == "" then return end
+				if not s or s == "" then
+					return
+				end
 				if Multi then
 					local list = {}
-					for item in string.gmatch(s, "[^\31]+") do Insert(list, item) end
+					for item in string.gmatch(s, "[^\31]+") do
+						Insert(list, item)
+					end
 					DropdownObj:Set(list)
 				else
 					Select(s)
@@ -2729,8 +3086,13 @@ function Library:CreateSection(Parent, Title)
 		local InputObj = { Name = tostring(Name or "Input"), Container = Container, Input = Input, Label = Lbl }
 		local NotifyFlag = LibRef:RegisterFlag("Options", Flag, InputObj, Value)
 		local WrappedCallback = Callback
-		Callback = function(v, enter) NotifyFlag(v); WrappedCallback(v, enter) end
-		function InputObj:Get() return Value end
+		Callback = function(v, enter)
+			NotifyFlag(v)
+			WrappedCallback(v, enter)
+		end
+		function InputObj:Get()
+			return Value
+		end
 		function InputObj:Set(v)
 			Value = tostring(v or "")
 			Input.Text = Value
@@ -2738,8 +3100,12 @@ function Library:CreateSection(Parent, Title)
 		end
 
 		LibRef:RegisterFlagSerializer(self.Name .. "::Input::" .. tostring(Name or "Input"), {
-			serialize = function() return (Value or ""):gsub("[\r\n]", " ") end,
-			deserialize = function(s) InputObj:Set(s) end,
+			serialize = function()
+				return (Value or ""):gsub("[\r\n]", " ")
+			end,
+			deserialize = function(s)
+				InputObj:Set(s)
+			end,
 		})
 		return InputObj
 	end
@@ -2762,8 +3128,12 @@ function Library:CreateSection(Parent, Title)
 			TextYAlignment = Enum.TextYAlignment.Top,
 		})
 		local LabelObj = { Label = Lbl }
-		function LabelObj:Set(t) Lbl.Text = tostring(t or "") end
-		function LabelObj:Get() return Lbl.Text end
+		function LabelObj:Set(t)
+			Lbl.Text = tostring(t or "")
+		end
+		function LabelObj:Get()
+			return Lbl.Text
+		end
 		return LabelObj
 	end
 
@@ -2819,7 +3189,11 @@ function Library:CreateSection(Parent, Title)
 
 		local UserCallback = typeof(Callback) == "function" and Callback or function() end
 		local WrappedCb
-		local CpObj = LibRef:MountColorpicker(Swatch, Color, function(c, t) if WrappedCb then WrappedCb(c, t) end end)
+		local CpObj = LibRef:MountColorpicker(Swatch, Color, function(c, t)
+			if WrappedCb then
+				WrappedCb(c, t)
+			end
+		end)
 		CpObj.Name = tostring(Name or "Color")
 		CpObj.Row = Row
 		CpObj.Label = Lbl
@@ -2828,15 +3202,22 @@ function Library:CreateSection(Parent, Title)
 			CpObj.Value = Color
 			CpObj.Transparency = 0
 			CpObj._changedListeners = {}
-			function CpObj:OnChanged(cb) Insert(self._changedListeners, cb); return self end
-			function CpObj:SetValue(c, t) return self:Set(c, t) end
+			function CpObj:OnChanged(cb)
+				Insert(self._changedListeners, cb)
+				return self
+			end
+			function CpObj:SetValue(c, t)
+				return self:Set(c, t)
+			end
 			LibRef.Options[Flag] = CpObj
 		end
 		WrappedCb = function(c, t)
 			if CpObj.Flag then
 				CpObj.Value = c
 				CpObj.Transparency = t
-				for _, cb in ipairs(CpObj._changedListeners) do cb(c, t) end
+				for _, cb in ipairs(CpObj._changedListeners) do
+					cb(c, t)
+				end
 			end
 			UserCallback(c, t)
 		end
@@ -2844,11 +3225,13 @@ function Library:CreateSection(Parent, Title)
 		LibRef:RegisterFlagSerializer(self.Name .. "::Color::" .. tostring(Name or "Color"), {
 			serialize = function()
 				local c, t = CpObj:Get()
-				return string.format("%d,%d,%d,%d",
+				return string.format(
+					"%d,%d,%d,%d",
 					MathFloor(c.R * 255 + 0.5),
 					MathFloor(c.G * 255 + 0.5),
 					MathFloor(c.B * 255 + 0.5),
-					MathFloor((t or 0) * 255 + 0.5))
+					MathFloor((t or 0) * 255 + 0.5)
+				)
 			end,
 			deserialize = function(s)
 				local r, g, b, a = s:match("^(%d+),(%d+),(%d+),(%d+)$")
@@ -2859,7 +3242,6 @@ function Library:CreateSection(Parent, Title)
 		})
 		return CpObj
 	end
-
 
 	function GroupboxObj:AddKeybind(Name, DefaultKey, DefaultMode, Callback)
 		PreElement(self)
@@ -2903,20 +3285,31 @@ function Library:CreateSection(Parent, Title)
 			Callback = function(active)
 				if KbObj.Flag then
 					KbObj.Value = active
-					for _, cb in ipairs(KbObj._changedListeners) do cb(active) end
+					for _, cb in ipairs(KbObj._changedListeners) do
+						cb(active)
+					end
 				end
 				UserCallback(active)
 			end,
 		})
 		KbObj.Keybind = Kb
-		function KbObj:Get() return Kb:Get() end
-		function KbObj:Set(k, m) Kb:Set(k, m) end
+		function KbObj:Get()
+			return Kb:Get()
+		end
+		function KbObj:Set(k, m)
+			Kb:Set(k, m)
+		end
 		if Flag and Flag ~= "" then
 			KbObj.Flag = Flag
 			KbObj.Value = false
 			KbObj._changedListeners = {}
-			function KbObj:OnChanged(cb) Insert(self._changedListeners, cb); return self end
-			function KbObj:SetValue(k, m) Kb:Set(k, m) end
+			function KbObj:OnChanged(cb)
+				Insert(self._changedListeners, cb)
+				return self
+			end
+			function KbObj:SetValue(k, m)
+				Kb:Set(k, m)
+			end
 			LibRef.Options[Flag] = KbObj
 		end
 		LibRef:RegisterFlagSerializer(self.Name .. "::Keybind::" .. tostring(Name or "Keybind"), {
@@ -2926,7 +3319,9 @@ function Library:CreateSection(Parent, Title)
 			end,
 			deserialize = function(s)
 				local m, kn = s:match("^([^|]+)|(.*)$")
-				if m then Kb:Set(ParseKeyName(kn or ""), m) end
+				if m then
+					Kb:Set(ParseKeyName(kn or ""), m)
+				end
 			end,
 		})
 		return KbObj
@@ -3020,7 +3415,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 	end
 
 	if getgenv().NeptuneShared then
-		pcall(function() getgenv().NeptuneShared:Unload() end)
+		pcall(function()
+			getgenv().NeptuneShared:Unload()
+		end)
 	end
 	getgenv().NeptuneShared = self
 
@@ -3374,7 +3771,6 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			ClipsDescendants = true,
 		})
 
-
 		local TabObj = {
 			Name = TabName,
 			Button = Btn,
@@ -3454,7 +3850,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 
 		function TabObj:ApplyHomePage(opts)
 			opts = typeof(opts) == "table" and opts or {}
-			if self._homeApplied then return end
+			if self._homeApplied then
+				return
+			end
 			if #self.SubTabs > 0 then
 				error("Tab '" .. self.Name .. "' has subtabs - ApplyHomePage is only for tabs without subtabs", 2)
 			end
@@ -3517,7 +3915,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			LibRef:BindThemedGradient(HeroGlowGrad, { "Accent", "AccentTwo" })
 
 			LibRef:Connection(RunService.Heartbeat, function()
-				if not HeroGlowGrad.Parent then return end
+				if not HeroGlowGrad.Parent then
+					return
+				end
 				local T = os.clock() * 0.4
 				HeroGlowGrad.Offset = NewVector2(math.sin(T) * 0.25, math.cos(T * 0.7) * 0.1)
 				HeroGlowGrad.Rotation = 20 + math.sin(T * 0.5) * 6
@@ -3736,9 +4136,13 @@ function Library:Window(Title, Subtitle, Icon, Size)
 
 			local function FormatDuration(S)
 				S = MathFloor(S)
-				if S < 60 then return S .. "s" end
+				if S < 60 then
+					return S .. "s"
+				end
 				local M = MathFloor(S / 60)
-				if M < 60 then return string.format("%dm %ds", M, S % 60) end
+				if M < 60 then
+					return string.format("%dm %ds", M, S % 60)
+				end
 				local H = MathFloor(M / 60)
 				return string.format("%dh %dm", H, M % 60)
 			end
@@ -3746,19 +4150,25 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			MakeStat(1, "Players", function()
 				return tostring(#PlayersSvc:GetPlayers()) .. "/" .. tostring(PlayersSvc.MaxPlayers)
 			end)
-			MakeStat(2, "FPS", function() return MathFloor(FpsAvg + 0.5) end)
+			MakeStat(2, "FPS", function()
+				return MathFloor(FpsAvg + 0.5)
+			end)
 			MakeStat(3, "Ping", function()
 				local Item = StatsService:FindFirstChild("Network")
 				if Item then
 					local Sub = Item:FindFirstChild("ServerStatsItem")
 					if Sub then
 						local Ping = Sub:FindFirstChild("Data Ping")
-						if Ping then return MathFloor(Ping:GetValue() + 0.5) .. "ms" end
+						if Ping then
+							return MathFloor(Ping:GetValue() + 0.5) .. "ms"
+						end
 					end
 				end
 				return "-"
 			end)
-			MakeStat(4, "Uptime", function() return FormatDuration(os.clock() - StartTime) end)
+			MakeStat(4, "Uptime", function()
+				return FormatDuration(os.clock() - StartTime)
+			end)
 
 			task.spawn(function()
 				while self.Content and self.Content.Parent do
@@ -3874,7 +4284,10 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				local LrmDiscordId = rawget(getfenv(), "LRM_LinkedDiscordID") or "networph"
 				local LrmExecutions = rawget(getfenv(), "LRM_TotalExecutions") or "42"
 				local LrmSecondsLeft = rawget(getfenv(), "LRM_SecondsLeft")
-				local DaysLeft = (LrmSecondsLeft and (LrmSecondsLeft == math.huge and "Lifetime" or tostring(MathFloor(LrmSecondsLeft / 86400)))) or "Lifetime"
+				local DaysLeft = (
+					LrmSecondsLeft
+					and (LrmSecondsLeft == math.huge and "Lifetime" or tostring(MathFloor(LrmSecondsLeft / 86400)))
+				) or "Lifetime"
 				KeyLines = {
 					"You have run " .. tostring(LrmScriptName),
 					"Current version: " .. tostring(LrmScriptVersion),
@@ -3896,7 +4309,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 		end
 
 		function TabObj:ApplySettings()
-			if self._settingsApplied then return end
+			if self._settingsApplied then
+				return
+			end
 			if #self.SubTabs > 0 then
 				error("Tab '" .. self.Name .. "' has subtabs - ApplySettings is only for tabs without subtabs", 2)
 			end
@@ -3914,7 +4329,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				end
 				return "None"
 			end
-			local function WriteAutoload(name) writefile(autoloadPath, name or "None") end
+			local function WriteAutoload(name)
+				writefile(autoloadPath, name or "None")
+			end
 
 			local ConfigNames = { "None", "Default" }
 			if isfolder and isfolder(configFolder) then
@@ -3928,9 +4345,14 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			local AutoloadInitial = ReadAutoload()
 			local AutoloadValid = false
 			for _, nm in ipairs(ConfigNames) do
-				if nm == AutoloadInitial then AutoloadValid = true break end
+				if nm == AutoloadInitial then
+					AutoloadValid = true
+					break
+				end
 			end
-			if not AutoloadValid then AutoloadInitial = "None" end
+			if not AutoloadValid then
+				AutoloadInitial = "None"
+			end
 
 			local ThemeBox = OptionsSub:AddLeftGroupbox("Theme")
 			local OtherBox = OptionsSub:AddRightGroupbox("Other")
@@ -3938,9 +4360,13 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			OtherBox:AddSlider({
 				Flag = "AnimationSpeed",
 				Text = "Animation speed",
-				Min = 0, Max = 200, Default = 100,
+				Min = 0,
+				Max = 200,
+				Default = 100,
 				Suffix = "%",
-				Callback = function(v) LibRef.AnimationSpeed = v / 100 end,
+				Callback = function(v)
+					LibRef.AnimationSpeed = v / 100
+				end,
 			})
 			OtherBox:AddToggle({
 				Flag = "Anonymous",
@@ -3949,7 +4375,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				Callback = function(on)
 					LibRef.AnonymousMode = on == true
 					for _, entry in ipairs(LibRef._HomeTitles or {}) do
-						if entry.Apply then entry.Apply() end
+						if entry.Apply then
+							entry.Apply()
+						end
 					end
 				end,
 			})
@@ -3958,62 +4386,102 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				Text = "Autoload",
 				Values = ConfigNames,
 				Default = AutoloadInitial,
-				Callback = function(name) WriteAutoload(name) end,
+				Callback = function(name)
+					WriteAutoload(name)
+				end,
 			})
 
 			local ThemePresets = {
 				Default = {
-					Background = Hex("0F1014"), SubBackground = Hex("12141A"),
-					TabBackground = Hex("171821"), Divider = Hex("1B1E28"),
-					SubText = Hex("4A4C57"), Accent = Hex("70D5D4"),
-					AccentTwo = Hex("437C82"), AccentBright = Hex("B5F0EF"),
+					Background = Hex("0F1014"),
+					SubBackground = Hex("12141A"),
+					TabBackground = Hex("171821"),
+					Divider = Hex("1B1E28"),
+					SubText = Hex("4A4C57"),
+					Accent = Hex("70D5D4"),
+					AccentTwo = Hex("437C82"),
+					AccentBright = Hex("B5F0EF"),
 					SectionBackground = Hex("12141A"),
 				},
 				Crimson = {
-					Background = Hex("100A0B"), SubBackground = Hex("1A1012"),
-					TabBackground = Hex("221316"), Divider = Hex("2A171B"),
-					SubText = Hex("574147"), Accent = Hex("E8575C"),
-					AccentTwo = Hex("8A2E32"), AccentBright = Hex("FFA5A9"),
+					Background = Hex("100A0B"),
+					SubBackground = Hex("1A1012"),
+					TabBackground = Hex("221316"),
+					Divider = Hex("2A171B"),
+					SubText = Hex("574147"),
+					Accent = Hex("E8575C"),
+					AccentTwo = Hex("8A2E32"),
+					AccentBright = Hex("FFA5A9"),
 					SectionBackground = Hex("1A1012"),
 				},
 				Violet = {
-					Background = Hex("0E0B14"), SubBackground = Hex("13101C"),
-					TabBackground = Hex("1A1527"), Divider = Hex("201B2F"),
-					SubText = Hex("4E4858"), Accent = Hex("B47AE0"),
-					AccentTwo = Hex("6A4593"), AccentBright = Hex("E0C5FF"),
+					Background = Hex("0E0B14"),
+					SubBackground = Hex("13101C"),
+					TabBackground = Hex("1A1527"),
+					Divider = Hex("201B2F"),
+					SubText = Hex("4E4858"),
+					Accent = Hex("B47AE0"),
+					AccentTwo = Hex("6A4593"),
+					AccentBright = Hex("E0C5FF"),
 					SectionBackground = Hex("13101C"),
 				},
 				Forest = {
-					Background = Hex("0B100D"), SubBackground = Hex("101A13"),
-					TabBackground = Hex("13221A"), Divider = Hex("172A1D"),
-					SubText = Hex("445548"), Accent = Hex("7ED382"),
-					AccentTwo = Hex("3F7F42"), AccentBright = Hex("BFF0C1"),
+					Background = Hex("0B100D"),
+					SubBackground = Hex("101A13"),
+					TabBackground = Hex("13221A"),
+					Divider = Hex("172A1D"),
+					SubText = Hex("445548"),
+					Accent = Hex("7ED382"),
+					AccentTwo = Hex("3F7F42"),
+					AccentBright = Hex("BFF0C1"),
 					SectionBackground = Hex("101A13"),
 				},
 				Amber = {
-					Background = Hex("110F09"), SubBackground = Hex("1A160D"),
-					TabBackground = Hex("231C10"), Divider = Hex("2B2214"),
-					SubText = Hex("574E3E"), Accent = Hex("E8B857"),
-					AccentTwo = Hex("8A6A2E"), AccentBright = Hex("FFE2A5"),
+					Background = Hex("110F09"),
+					SubBackground = Hex("1A160D"),
+					TabBackground = Hex("231C10"),
+					Divider = Hex("2B2214"),
+					SubText = Hex("574E3E"),
+					Accent = Hex("E8B857"),
+					AccentTwo = Hex("8A6A2E"),
+					AccentBright = Hex("FFE2A5"),
 					SectionBackground = Hex("1A160D"),
 				},
 				Mono = {
-					Background = Hex("0F0F0F"), SubBackground = Hex("151515"),
-					TabBackground = Hex("1E1E1E"), Divider = Hex("252525"),
-					SubText = Hex("4A4A4A"), Accent = Hex("CCCCCC"),
-					AccentTwo = Hex("7F7F7F"), AccentBright = Hex("FFFFFF"),
+					Background = Hex("0F0F0F"),
+					SubBackground = Hex("151515"),
+					TabBackground = Hex("1E1E1E"),
+					Divider = Hex("252525"),
+					SubText = Hex("4A4A4A"),
+					Accent = Hex("CCCCCC"),
+					AccentTwo = Hex("7F7F7F"),
+					AccentBright = Hex("FFFFFF"),
 					SectionBackground = Hex("151515"),
 				},
 				OLED = {
-					Background = Hex("000000"), SubBackground = Hex("000000"),
-					TabBackground = Hex("0A0A0A"), Divider = Hex("141414"),
-					SubText = Hex("555555"), Accent = Hex("FFFFFF"),
-					AccentTwo = Hex("888888"), AccentBright = Hex("FFFFFF"),
+					Background = Hex("000000"),
+					SubBackground = Hex("000000"),
+					TabBackground = Hex("0A0A0A"),
+					Divider = Hex("141414"),
+					SubText = Hex("555555"),
+					Accent = Hex("FFFFFF"),
+					AccentTwo = Hex("888888"),
+					AccentBright = Hex("FFFFFF"),
 					SectionBackground = Hex("050505"),
 				},
 			}
 
-			local PaletteKeys = { "Background", "SubBackground", "TabBackground", "Divider", "SubText", "Accent", "AccentTwo", "AccentBright", "SectionBackground" }
+			local PaletteKeys = {
+				"Background",
+				"SubBackground",
+				"TabBackground",
+				"Divider",
+				"SubText",
+				"Accent",
+				"AccentTwo",
+				"AccentBright",
+				"SectionBackground",
+			}
 			local ThemePickers = {}
 
 			ThemeBox:AddDropdown({
@@ -4023,10 +4491,14 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				Default = "Default",
 				Callback = function(name)
 					local p = ThemePresets[name]
-					if not p then return end
+					if not p then
+						return
+					end
 					for k, v in pairs(p) do
 						Palette.Default[k] = v
-						if ThemePickers[k] then ThemePickers[k]:Set(v, 0) end
+						if ThemePickers[k] then
+							ThemePickers[k]:Set(v, 0)
+						end
 					end
 					LibRef:RefreshPalette()
 				end,
@@ -4163,7 +4635,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			end
 			local function RemoveConfig(name)
 				local path = configFolder .. "/" .. name .. ".cfg"
-				if isfile(path) then delfile(path) end
+				if isfile(path) then
+					delfile(path)
+				end
 			end
 			local function SetLoaded(newName)
 				LoadedName = newName
@@ -4184,7 +4658,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			local RefreshAutoloadList
 
 			local function CreateConfigBar(name, dateType, dateStr, canDelete)
-				if ConfigBars[name] then return end
+				if ConfigBars[name] then
+					return
+				end
 				dateStr = dateStr or "01.01.2025"
 				local currentName = name
 
@@ -4300,18 +4776,22 @@ function Library:Window(Title, Subtitle, Icon, Size)
 						Padding = NewUDim(0, 6),
 					})
 					DeleteIcon = LibRef:CreateInstance("ImageLabel", {
-						Parent = DeleteBtn, LayoutOrder = 1,
+						Parent = DeleteBtn,
+						LayoutOrder = 1,
 						Size = NewUDim2(0, 11, 0, 11),
-						BackgroundTransparency = 1, BorderSizePixel = 0,
+						BackgroundTransparency = 1,
+						BorderSizePixel = 0,
 						Image = "rbxassetid://127835493649148",
 						ImageColor3 = FromRgb(255, 255, 255),
 						ScaleType = Enum.ScaleType.Fit,
 					})
 					DeleteLbl = LibRef:CreateInstance("TextLabel", {
-						Parent = DeleteBtn, LayoutOrder = 2,
+						Parent = DeleteBtn,
+						LayoutOrder = 2,
 						Size = NewUDim2(0, 0, 0, 14),
 						AutomaticSize = Enum.AutomaticSize.X,
-						BackgroundTransparency = 1, BorderSizePixel = 0,
+						BackgroundTransparency = 1,
+						BorderSizePixel = 0,
 						FontFace = Library.Fonts.SemiBold,
 						Text = "Delete",
 						TextColor3 = FromRgb(255, 255, 255),
@@ -4352,18 +4832,22 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					Padding = NewUDim(0, 6),
 				})
 				local ModifyIcon = LibRef:CreateInstance("ImageLabel", {
-					Parent = ModifyRow, LayoutOrder = 1,
+					Parent = ModifyRow,
+					LayoutOrder = 1,
 					Size = NewUDim2(0, 11, 0, 11),
-					BackgroundTransparency = 1, BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
 					Image = "rbxassetid://131168464498092",
 					ImageColor3 = FromRgb(255, 255, 255),
 					ScaleType = Enum.ScaleType.Fit,
 				})
 				local ModifyLbl = LibRef:CreateInstance("TextLabel", {
-					Parent = ModifyRow, LayoutOrder = 2,
+					Parent = ModifyRow,
+					LayoutOrder = 2,
 					Size = NewUDim2(0, 0, 0, 14),
 					AutomaticSize = Enum.AutomaticSize.X,
-					BackgroundTransparency = 1, BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
 					FontFace = Library.Fonts.SemiBold,
 					Text = "Modify",
 					TextColor3 = FromRgb(255, 255, 255),
@@ -4412,18 +4896,22 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					Padding = NewUDim(0, 6),
 				})
 				local SaveIcon = LibRef:CreateInstance("ImageLabel", {
-					Parent = SaveBtn, LayoutOrder = 1,
+					Parent = SaveBtn,
+					LayoutOrder = 1,
 					Size = NewUDim2(0, 11, 0, 11),
-					BackgroundTransparency = 1, BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
 					Image = "rbxassetid://90921118572382",
 					ImageColor3 = FromRgb(255, 255, 255),
 					ScaleType = Enum.ScaleType.Fit,
 				})
 				local SaveLbl = LibRef:CreateInstance("TextLabel", {
-					Parent = SaveBtn, LayoutOrder = 2,
+					Parent = SaveBtn,
+					LayoutOrder = 2,
 					Size = NewUDim2(0, 0, 0, 14),
 					AutomaticSize = Enum.AutomaticSize.X,
-					BackgroundTransparency = 1, BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
 					FontFace = Library.Fonts.SemiBold,
 					Text = "Save",
 					TextColor3 = FromRgb(255, 255, 255),
@@ -4431,7 +4919,6 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					TextXAlignment = Enum.TextXAlignment.Center,
 					TextYAlignment = Enum.TextYAlignment.Center,
 				})
-
 
 				local function RenderActive(on)
 					TweenNew(Bar, BarTween, {
@@ -4450,7 +4937,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 
 				local Editing = false
 				local function EnterEdit()
-					if Editing then return end
+					if Editing then
+						return
+					end
 					Editing = true
 					ModifyInput.Text = currentName
 					ModifyInput.Visible = true
@@ -4472,7 +4961,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					TweenNew(DateLbl, BarTween, { TextTransparency = 1 }):Play()
 				end
 				local function ExitEdit()
-					if not Editing then return end
+					if not Editing then
+						return
+					end
 					Editing = false
 					ModifyInput.Visible = false
 					TweenNew(ModifyBtn, ExpandTween, {
@@ -4492,7 +4983,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					TweenNew(DateLbl, BarTween, { TextTransparency = 0 }):Play()
 				end
 				local function SetName(newName)
-					if newName == currentName or newName == "" or ConfigBars[newName] then return end
+					if newName == currentName or newName == "" or ConfigBars[newName] then
+						return
+					end
 					local dt = os.date("%d.%m.%Y")
 					if canDelete then
 						local oldPath = configFolder .. "/" .. currentName .. ".cfg"
@@ -4511,12 +5004,18 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					RenderFns[currentName] = nil
 					SetNameFns[newName] = SetNameFns[currentName]
 					SetNameFns[currentName] = nil
-					if LoadedName == currentName then LoadedName = newName end
+					if LoadedName == currentName then
+						LoadedName = newName
+					end
 					currentName = newName
 					TitleLbl.Text = newName
-					if canDelete then DateLbl.Text = "Modified - " .. dt end
+					if canDelete then
+						DateLbl.Text = "Modified - " .. dt
+					end
 					Bar.Name = "ConfigBar_" .. newName
-					if RefreshAutoloadList then RefreshAutoloadList() end
+					if RefreshAutoloadList then
+						RefreshAutoloadList()
+					end
 				end
 				SetNameFns[currentName] = SetName
 
@@ -4532,14 +5031,20 @@ function Library:Window(Title, Subtitle, Icon, Size)
 					SetLoaded(currentName)
 				end)
 				LibRef:Connection(Bar.MouseButton1Click, function()
-					if Editing then return end
+					if Editing then
+						return
+					end
 					SetLoaded(currentName)
 				end)
 				LibRef:Connection(ModifyBtn.MouseButton1Click, function()
-					if not Editing then EnterEdit() end
+					if not Editing then
+						EnterEdit()
+					end
 				end)
 				LibRef:Connection(SaveBtn.MouseButton1Click, function()
-					if Editing then return end
+					if Editing then
+						return
+					end
 					SaveBtn.BackgroundColor3 = Palette.Default.Accent
 					TweenNew(SaveBtn, BarTween, { BackgroundColor3 = Palette.Default.TabBackground }):Play()
 					local dt = os.date("%d.%m.%Y")
@@ -4548,7 +5053,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				end)
 				if canDelete then
 					LibRef:Connection(DeleteBtn.MouseButton1Click, function()
-						if Editing then return end
+						if Editing then
+							return
+						end
 						DeleteBtn.BackgroundColor3 = Palette.Default.Accent
 						TweenNew(DeleteBtn, BarTween, { BackgroundColor3 = Palette.Default.TabBackground }):Play()
 						task.delay(BarTween.Time, function()
@@ -4560,7 +5067,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 							if LoadedName == currentName then
 								SetLoaded("Default")
 							end
-							if RefreshAutoloadList then RefreshAutoloadList() end
+							if RefreshAutoloadList then
+								RefreshAutoloadList()
+							end
 						end)
 					end)
 				end
@@ -4588,14 +5097,18 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			RefreshAutoloadList = function()
 				local names = { "None", "Default" }
 				for nm, _ in pairs(ConfigBars) do
-					if nm ~= "Default" then Insert(names, nm) end
+					if nm ~= "Default" then
+						Insert(names, nm)
+					end
 				end
 				AutoloadDropdown:SetValues(names)
 			end
 
 			LibRef:Connection(Widget.MouseButton1Click, function()
 				local nm = Box.Text
-				if nm == "" or ConfigBars[nm] then return end
+				if nm == "" or ConfigBars[nm] then
+					return
+				end
 				local dt = os.date("%d.%m.%Y")
 				WriteConfig(nm, "CR", dt)
 				CreateConfigBar(nm, "CR", dt, true)
@@ -4604,7 +5117,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 			end)
 
 			if AutoloadInitial and AutoloadInitial ~= "None" and ConfigBars[AutoloadInitial] then
-				task.defer(function() SetLoaded(AutoloadInitial) end)
+				task.defer(function()
+					SetLoaded(AutoloadInitial)
+				end)
 			end
 
 			return {
@@ -4618,7 +5133,9 @@ function Library:Window(Title, Subtitle, Icon, Size)
 				OnConfigSelected = function(_, cb)
 					ConfigSelectedCallback = typeof(cb) == "function" and cb or function() end
 				end,
-				GetLoaded = function() return LoadedName end,
+				GetLoaded = function()
+					return LoadedName
+				end,
 			}
 		end
 
@@ -4769,7 +5286,7 @@ function Library:Window(Title, Subtitle, Icon, Size)
 						ImageColor3 = on and Palette.Default.Accent or Palette.Default.SubText,
 					}):Play()
 				end
-			TweenNew(self.Label, TweenInfoSwitch, {
+				TweenNew(self.Label, TweenInfoSwitch, {
 					TextColor3 = on and FromRgb(255, 255, 255) or Palette.Default.SubText,
 				}):Play()
 				TweenNew(self.Underline, TweenInfoSwitch, {
@@ -4841,12 +5358,18 @@ end
 
 function Library:Unload()
 	for _, Conn in ipairs(self.Connections) do
-		if Conn ~= nil then pcall(function() Conn:Disconnect() end) end
+		if Conn ~= nil then
+			pcall(function()
+				Conn:Disconnect()
+			end)
+		end
 	end
 	self.Connections = {}
 
 	if self.CurrentlyOpen and self.CurrentlyOpen.Gui then
-		pcall(function() self.CurrentlyOpen.Gui:Destroy() end)
+		pcall(function()
+			self.CurrentlyOpen.Gui:Destroy()
+		end)
 	end
 	self.CurrentlyOpen = nil
 	getgenv().NeptuneShared = nil
@@ -4861,18 +5384,20 @@ function Library:Unload()
 	self._ThemeRenderers = {}
 
 	if self.KeybindList and self.KeybindList.Gui then
-		pcall(function() self.KeybindList.Gui:Destroy() end)
+		pcall(function()
+			self.KeybindList.Gui:Destroy()
+		end)
 		self.KeybindList.Entries = {}
 		self.KeybindList.OrderedIds = {}
 		self.KeybindList.Items = {}
 	end
 
 	if self.Notifications and self.Notifications.Gui then
-		pcall(function() self.Notifications.Gui:Destroy() end)
+		pcall(function()
+			self.Notifications.Gui:Destroy()
+		end)
 		self.Notifications.Queue = {}
 	end
 end
-
-
 
 return Library
