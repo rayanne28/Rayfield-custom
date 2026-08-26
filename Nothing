@@ -2737,7 +2737,6 @@ function Library:CreateSection(Parent, Title)
 			ScrollBarThickness = 6,
 			ScrollBarImageColor3 = Palette.Default.Accent,
 			ScrollBarImageTransparency = 0,
-			ScrollBarInset = Enum.ScrollBarInset.Always,
 			BorderSizePixel = 0,
 			BackgroundTransparency = 1,
 			Active = true,
